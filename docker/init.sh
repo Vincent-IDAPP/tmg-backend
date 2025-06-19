@@ -1,15 +1,17 @@
 #!/bin/sh
 
-echo "Attente que MySQL soit prêt..."
+echo "⏳ Attente de MySQL..."
 
-while ! nc -z mysql 3306; do
-  sleep 1
+# Attente que MySQL soit prêt
+until nc -z mysql 3306; do
+  sleep 2
+  echo "⏳ En attente de la BDD..."
 done
 
-echo "MySQL est prêt, lancement des migrations et seeders..."
+echo "✅ Base de données prête. Lancement des migrations..."
 
-php artisan migrate --force
-php artisan db:seed --force
+# Exécuter migrations + seed
+php artisan migrate:fresh --seed || exit 1
 
-echo "Démarrage de PHP-FPM"
+# Lancer PHP-FPM pour garder le conteneur actif
 php-fpm
