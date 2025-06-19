@@ -26,7 +26,7 @@ WORKDIR /var/www/html
 COPY . /var/www/html
 
 # Copier le script d'initialisation
-COPY docker/init.sh /usr/local/bin/init.sh
+COPY ./docker/init.sh /usr/local/bin/init.sh
 
 # Donner les droits d'exécution au script (important !)
 RUN chmod +x /usr/local/bin/init.sh
