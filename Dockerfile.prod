@@ -1,28 +1,44 @@
-FROM php:8.2-fpm-alpine
+FROM php:8.2-fpm
 
-# Install dependencies
-RUN apk add --no-cache \
-    bash \
-    mysql-client \
-    libzip-dev \
-    oniguruma-dev \
+# Installer les dépendances système nécessaires
+RUN apt-get update && apt-get install -y \
+    git \
     curl \
+    libzip-dev \
     zip \
     unzip \
-    && docker-php-ext-install pdo_mysql zip mbstring
+    libonig-dev \
+    libxml2-dev \
+    libpng-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
+    default-mysql-client \
+    netcat
 
+# Installer les extensions PHP requises
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install pdo_mysql mbstring zip exif pcntl bcmath gd xml
+
+# Définir le dossier de travail
 WORKDIR /var/www/html
 
-# Copier les fichiers de l'app
-COPY . .
+# Copier le code source dans le conteneur
+COPY . /var/www/html
 
-# Installer composer + dépendances
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-RUN composer install --optimize-autoloader --no-dev
+# Copier le script d'initialisation
+COPY docker/init.sh /usr/local/bin/init.sh
 
-# Permissions
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+# Rendre le script exécutable
+RUN chmod +x /usr/local/bin/init.sh
 
+# Installer composer (version stable)
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Installer les dépendances PHP via composer
+RUN composer install --no-interaction --prefer-dist --optimize-autoloader
+
+# Exposer le port 9000 pour php-fpm
 EXPOSE 9000
 
-CMD ["php-fpm"]
+# Lancer le script init.sh au démarrage
+CMD ["init.sh"]
