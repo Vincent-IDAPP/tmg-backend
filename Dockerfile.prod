@@ -1,0 +1,28 @@
+FROM php:8.2-fpm-alpine
+
+# Install dependencies
+RUN apk add --no-cache \
+    bash \
+    mysql-client \
+    libzip-dev \
+    oniguruma-dev \
+    curl \
+    zip \
+    unzip \
+    && docker-php-ext-install pdo_mysql zip mbstring
+
+WORKDIR /var/www/html
+
+# Copier les fichiers de l'app
+COPY . .
+
+# Installer composer + dépendances
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+RUN composer install --optimize-autoloader --no-dev
+
+# Permissions
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+
+EXPOSE 9000
+
+CMD ["php-fpm"]
