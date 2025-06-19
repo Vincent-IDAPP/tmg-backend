@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y \
     libjpeg-dev \
     libfreetype6-dev \
     default-mysql-client \
-    netcat
+    netcat-openbsd
 
 # Installer les extensions PHP requises
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
