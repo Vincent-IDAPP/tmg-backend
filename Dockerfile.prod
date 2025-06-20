@@ -37,4 +37,4 @@ RUN composer install --no-interaction --prefer-dist --optimize-autoloader --no-d
 EXPOSE 9000
 
 # Lancer le script d'init (migrations + seed) puis PHP-FPM
-CMD ["/init.sh"]
+CMD ["/docker/init.sh"]
