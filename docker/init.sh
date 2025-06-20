@@ -11,7 +11,7 @@ done
 echo "✅ Base de données prête. Lancement des migrations..."
 
 # Exécuter migrations + seed
-php artisan migrate:fresh --seed || exit 1
+php artisan migrate:fresh --seed --force || exit 1
 
 # Lancer PHP-FPM pour garder le conteneur actif
 php-fpm
