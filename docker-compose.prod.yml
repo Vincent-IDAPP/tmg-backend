@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   app:
     build:
@@ -9,6 +11,14 @@ services:
     working_dir: /var/www/html
     volumes:
       - .:/var/www/html
+    environment:
+      APP_ENV: production
+      APP_DEBUG: 'false'
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_DATABASE: laravel
+      DB_USERNAME: laravel
+      DB_PASSWORD: secret
     depends_on:
       - mysql
     networks:
