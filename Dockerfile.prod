@@ -37,6 +37,8 @@ RUN chmod +x /usr/local/bin/init.sh
 # Installer composer (version stable)
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
+ENV COMPOSER_ALLOW_SUPERUSER=1
+
 # Installer les dépendances PHP via composer
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 
@@ -44,4 +46,5 @@ RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 EXPOSE 9000
 
 # Lancer le script init.sh au démarrage
-CMD ["init.sh"]
+CMD ["/usr/local/bin/init.sh"]
+
