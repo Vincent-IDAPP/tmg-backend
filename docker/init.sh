@@ -9,6 +9,11 @@ done
 
 echo "✅ Base de données prête. Lancement des migrations..."
 
+if [ ! -f vendor/autoload.php ]; then
+  echo "📦 Installation des dépendances PHP..."
+  composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev
+fi
+
 php artisan migrate --force || exit 1
 
 echo "✅ Lancement des seeders..."
