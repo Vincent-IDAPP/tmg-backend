@@ -3,6 +3,9 @@
 .env
 .env.backup
 .env.production
+Dockerfile.local
+docker-compose.local.yml
+docker-compose-yml
 .phpactor.json
 .phpunit.result.cache
 /.fleet

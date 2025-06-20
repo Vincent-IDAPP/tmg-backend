@@ -1,5 +1,7 @@
+# Étape 1 : build avec PHP + extensions nécessaires
 FROM php:8.2-fpm
 
+# Installer les dépendances système nécessaires
 RUN apt-get update && apt-get install -y \
     git \
     curl \
@@ -12,24 +14,27 @@ RUN apt-get update && apt-get install -y \
     libjpeg-dev \
     libfreetype6-dev \
     default-mysql-client \
-    netcat-openbsd
-
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
+    netcat-openbsd \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install pdo_mysql mbstring zip exif pcntl bcmath gd xml
 
 WORKDIR /var/www/html
 
+# Copier les sources dans le container
 COPY . /var/www/html
 
+# Copier le script d'initialisation
 COPY ./docker/init.sh /init.sh
 RUN chmod +x /init.sh
 
+# Installer Composer (depuis l’image officielle composer)
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
+# Installer les dépendances PHP via composer (prod uniquement, optimisation)
 ENV COMPOSER_ALLOW_SUPERUSER=1
-
-RUN composer install --no-interaction --prefer-dist --optimize-autoloader
+RUN composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev
 
 EXPOSE 9000
 
+# Lancer le script d'init (migrations + seed) puis PHP-FPM
 CMD ["/init.sh"]
