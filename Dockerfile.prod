@@ -1,6 +1,5 @@
 FROM php:8.2-fpm
 
-# Installer les dépendances système nécessaires
 RUN apt-get update && apt-get install -y \
     git \
     curl \
@@ -15,35 +14,22 @@ RUN apt-get update && apt-get install -y \
     default-mysql-client \
     netcat-openbsd
 
-# Installer les extensions PHP requises
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install pdo_mysql mbstring zip exif pcntl bcmath gd xml
 
-# Définir le dossier de travail
 WORKDIR /var/www/html
 
-# Copier le code source dans le conteneur
 COPY . /var/www/html
 
-# Copier le script d'initialisation
-COPY ./docker/init.sh /usr/local/bin/init.sh
+COPY ./docker/init.sh /init.sh
+RUN chmod +x /init.sh
 
-# Donner les droits d'exécution au script (important !)
-RUN chmod +x /usr/local/bin/init.sh
-
-# Rendre le script exécutable
-RUN chmod +x /usr/local/bin/init.sh
-
-# Installer composer (version stable)
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 ENV COMPOSER_ALLOW_SUPERUSER=1
 
-# Installer les dépendances PHP via composer
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 
-# Exposer le port 9000 pour php-fpm
 EXPOSE 9000
 
-# Lancer le script init.sh au démarrage
 CMD ["/init.sh"]
