@@ -46,5 +46,4 @@ RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 EXPOSE 9000
 
 # Lancer le script init.sh au démarrage
-CMD ["/usr/local/bin/init.sh"]
-
+CMD ["/init.sh"]
