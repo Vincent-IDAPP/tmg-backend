@@ -23,10 +23,14 @@ WORKDIR /var/www/html
 # Copier les sources dans le container
 COPY . /var/www/html
 
+
 # Copier le script d'initialisation
 COPY ./docker/init.sh /init.sh
 RUN chmod +x /init.sh
 
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
+    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+    
 # Installer Composer (depuis l’image officielle composer)
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 COPY composer.json composer.lock ./
