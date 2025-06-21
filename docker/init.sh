@@ -19,4 +19,4 @@ php artisan db:seed --force || exit 1
 
 echo "✅ Démarrage de PHP-FPM..."
 
-php-fpm
+exec php-fpm
